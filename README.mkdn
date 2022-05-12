@@ -24,3 +24,18 @@ for each supported flash chip, as well as the `bootcrc` tool which converts its
 ELF file into the format expected by the RP2040.
 
 Bootloader binary files are deposited into the `bin` directory.
+
+## Constraints
+
+The bootloader needs to fit into 256 bytes (well, technically 252, unless you
+can devise a program whose final two instructions are also its CRC). To save
+space, I have chosen to not initialize RAM (data/bss). This means the bootloader
+must not use it. Only stack is permitted. This makes it slightly hard to use the
+PACs, which like global variables, but, it can be done. The linker script will
+fail the build if you accidentally use RAM.
+
+The toolchain version is pinned. I recommend this as a general practice, but
+it's even _more_ important in this case because small code generation changes
+that go unnoticed by desktop Rust developers could blow our size budget. The
+bootloader is known to fit when built with this toolchain only. It _might_ build
+with other toolchains. Such is our lot as embedded developers.
