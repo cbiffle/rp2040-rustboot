@@ -11,11 +11,12 @@ Spoiler: it appears that the answer is yes.
 
 ## Building the bootloader images.
 
-Currently built:
+Built and known to work:
 
 - Winbond W25Q080 (and similar), as seen on the Pi Pico.
 - GigaDevices GD25Q64CS (and similar), as seen on certain Adafruit boards.
-- Adesto AT25SF128A, untested.
+
+There's also untested support for AT25SF128A parts.
 
 You do not need the ARM GCC toolchain or binutils installed.
 
