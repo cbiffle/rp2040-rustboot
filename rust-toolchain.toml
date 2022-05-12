@@ -1,5 +1,4 @@
 [toolchain]
 channel = "nightly-2022-02-22"
-targets = [ "thumbv6m-none-eabi", "thumbv7em-none-eabihf", "thumbv8m.main-none-eabihf" ]
+targets = ["thumbv6m-none-eabi"]
 profile = "minimal"
-components = [ "rustfmt" ]
