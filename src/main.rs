@@ -1,9 +1,6 @@
 #![no_std]
 #![no_main]
 
-// asm isn't stable yet on the older toolchain I'm targeting here
-#![feature(asm)]
-
 // needed for the cheap reset facade below.
 #![feature(naked_functions)]
 
@@ -17,14 +14,25 @@ const PICO_FLASH_SPI_CLKDIV: u16 = 4;
 ///////////////////////////////////////////////////////////////////////////
 // Flash configuration.
 
+cfg_if::cfg_if! {
+    if #[cfg(feature = "chip-w25q080")] {
+        const CMD_READ: u32 = 0xeb;
+        const WAIT_CYCLES: u8 = 4;
+    } else if #[cfg(feature = "chip-gd25q64")] {
+        const CMD_READ: u32 = 0xe7;
+        const WAIT_CYCLES: u8 = 2;
+    } else {
+        compile_error!("must define a chip-* feature");
+    }
+}
+
 const CMD_WRITE_STATUS: u32 = 0x01;
+const CMD_WRITE_STATUS2: u32 = 0x31;
 const CMD_READ_STATUS: u32 = 0x05;
 const CMD_WRITE_ENABLE: u32 = 0x06;
 const CMD_READ_STATUS2: u32 = 0x35;
-const CMD_READ: u32 = 0xeb;
-const SREG_DATA: u32 = 0x02;
+const STATUS2_VALUE: u32 = 0x02;
 const MODE_CONTINUOUS_READ: u8 = 0xA0;
-const WAIT_CYCLES: u8 = 4;
 
 // Number of address + mode bits.
 const ADDR_MODE_BIT_COUNT: u8 = 32;
@@ -51,7 +59,7 @@ const ADDR_L: u8 = ADDR_MODE_BIT_COUNT / 4;
 #[no_mangle]
 #[naked]
 pub unsafe extern "C" fn Reset() -> ! {
-    asm!(
+    core::arch::asm!(
         "
             push {{lr}}
             bl safe_reset
@@ -126,14 +134,23 @@ extern "C" fn safe_reset() {
     let sreg = read_flash_sreg(&p.XIP_SSI, CMD_READ_STATUS2);
 
     // Check that the status register indicates QSPI mode. Reprogram it if not.
-    if sreg != SREG_DATA {
+    if sreg != STATUS2_VALUE {
         p.XIP_SSI.dr0.write(|w| unsafe { w.bits(CMD_WRITE_ENABLE) });
         wait_ssi_ready(&p.XIP_SSI);
         p.XIP_SSI.dr0.read();
 
-        p.XIP_SSI.dr0.write(|w| unsafe { w.bits(CMD_WRITE_STATUS) });
-        p.XIP_SSI.dr0.write(|w| unsafe { w.bits(0) });
-        p.XIP_SSI.dr0.write(|w| unsafe { w.bits(SREG_DATA) });
+        if cfg!(feature = "supports-write-status2") {
+            p.XIP_SSI.dr0.write(|w| unsafe { w.bits(CMD_WRITE_STATUS2) });
+        } else {
+            // Issue a two-byte write to STATUS, which overwrites more than
+            // we'd like, but the W25Q080 (at least) doesn't support
+            // single-byte writes to STATUS2 only.
+            p.XIP_SSI.dr0.write(|w| unsafe { w.bits(CMD_WRITE_STATUS) });
+            // Dummy extra byte
+            p.XIP_SSI.dr0.write(|w| unsafe { w.bits(0) });
+        }
+        // Write the SREG STATUS2 data regardless.
+        p.XIP_SSI.dr0.write(|w| unsafe { w.bits(STATUS2_VALUE) });
 
         wait_ssi_ready(&p.XIP_SSI);
         p.XIP_SSI.dr0.read();

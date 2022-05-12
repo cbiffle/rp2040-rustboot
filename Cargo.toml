@@ -3,15 +3,27 @@ name = "rp2040-rustboot"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+chip-w25q080 = []
+chip-gd25q64 = ["supports-write-status2"]
+
+supports-write-status2 = []
+
 [dependencies]
 rp2040-pac = "0.3"
 panic-halt = "0.2"
+cfg-if = "1"
 
 # This is just here so RLS works.
 [[bin]]
 name = "rp2040-rustboot"
 test = false
 bench = false
+
+[workspace]
+members = [
+    "bootcrc",
+]
 
 [profile.release]
 codegen-units = 1

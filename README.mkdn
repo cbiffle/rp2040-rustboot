@@ -7,4 +7,14 @@ program is responsible for setting up Flash to run the _rest_ of the code.
 Normally this program is written in assembly language. I was curious to see if
 it could be done in Rust.
 
-Spoiler: at least for the W25Q080 bootloader, the answer is yes.
+Spoiler: it appears that the answer is yes.
+
+## Building the bootloader images.
+
+You do not need the ARM GCC toolchain or binutils installed.
+
+Run the `build-all.sh` script inside the repo. This will build the bootloader
+for each supported flash chip, as well as the `bootcrc` tool which converts its
+ELF file into the format expected by the RP2040.
+
+Bootloader binary files are deposited into the `bin` directory.

@@ -1,0 +1,11 @@
+[package]
+name = "bootcrc"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+crc-any = "2.3"
+clap = {version = "3", features = ["derive"]}
+goblin = "0.4"
