@@ -4,7 +4,7 @@ set -euxo pipefail
 
 TGT=thumbv6m-none-eabi
 
-CHIPS="w25q080 gd25q64"
+CHIPS="w25q080 gd25q64 at25sf128a"
 
 mkdir -p bin/
 

@@ -15,7 +15,7 @@ const PICO_FLASH_SPI_CLKDIV: u16 = 4;
 // Flash configuration.
 
 cfg_if::cfg_if! {
-    if #[cfg(feature = "chip-w25q080")] {
+    if #[cfg(any(feature = "chip-w25q080", feature = "chip-at25sf128a"))] {
         const CMD_READ: u32 = 0xeb;
         const WAIT_CYCLES: u8 = 4;
     } else if #[cfg(feature = "chip-gd25q64")] {

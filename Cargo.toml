@@ -6,6 +6,7 @@ edition = "2021"
 [features]
 chip-w25q080 = []
 chip-gd25q64 = ["supports-write-status2"]
+chip-at25sf128a = ["supports-write-status2"]
 
 supports-write-status2 = []
 

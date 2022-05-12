@@ -11,6 +11,12 @@ Spoiler: it appears that the answer is yes.
 
 ## Building the bootloader images.
 
+Currently built:
+
+- Winbond W25Q080 (and similar), as seen on the Pi Pico.
+- GigaDevices GD25Q64CS (and similar), as seen on certain Adafruit boards.
+- Adesto AT25SF128A, untested.
+
 You do not need the ARM GCC toolchain or binutils installed.
 
 Run the `build-all.sh` script inside the repo. This will build the bootloader
