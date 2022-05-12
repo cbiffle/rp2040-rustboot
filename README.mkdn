@@ -1,0 +1,10 @@
+# RP2040 Flash Bootloader in Rust
+
+The RP2040 uses a two-stage bootloader scheme, where ROM loads the first 256
+bytes from an attached Flash chip into RAM and executes it. That 256 byte
+program is responsible for setting up Flash to run the _rest_ of the code.
+
+Normally this program is written in assembly language. I was curious to see if
+it could be done in Rust.
+
+Spoiler: at least for the W25Q080 bootloader, the answer is yes.

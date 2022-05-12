@@ -1,0 +1,20 @@
+[package]
+name = "rp2040-rustboot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rp2040-pac = "0.3"
+panic-halt = "0.2"
+
+# This is just here so RLS works.
+[[bin]]
+name = "rp2040-rustboot"
+test = false
+bench = false
+
+[profile.release]
+codegen-units = 1
+debug = true
+lto = true
+opt-level = "z"
