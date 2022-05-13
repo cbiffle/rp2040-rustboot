@@ -24,6 +24,14 @@ SECTIONS {
         __erodata = .;
     } >FLASH
 
+    .pad : {
+        . = ORIGIN(FLASH) + 252;
+    } >FLASH
+
+    .crc : {
+        LONG(0xEFBEADDE);
+    } >FLASH
+
     /*
      * These RAM sections are here to detect anything being errantly placed
      * in them. Because we boot without an r0 we can't actually use RAM.

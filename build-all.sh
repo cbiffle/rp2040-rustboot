@@ -6,9 +6,10 @@ TGT=thumbv6m-none-eabi
 
 CHIPS="w25q080 gd25q64 at25sf128a"
 
-mkdir -p bin/
+mkdir -p bin/ elf/
 
 for chip in $CHIPS; do
     cargo build --release --target $TGT --features chip-${chip}
-    cargo run -p bootcrc -- target/$TGT/release/rp2040-rustboot bin/rustboot-${chip}.bin
+    cp target/$TGT/release/rp2040-rustboot elf/rustboot-${chip}
+    cargo run -p bootcrc -- --update elf/rustboot-${chip} bin/rustboot-${chip}.bin
 done
