@@ -79,20 +79,18 @@ const ADDR_L: u8 = ADDR_MODE_BIT_COUNT / 4;
 pub unsafe extern "C" fn reset_handler() -> ! {
     core::arch::asm!(
         "
-            push {{lr}}
-            bl safe_reset
-            pop {{r0}}
-            cmp r0, #0
-            beq 1f
-            bx r0
+            mov r4, lr      @ back up return address in caller-save reg
+            bl safe_reset   @ do the Rust part below
+            cmp r4, #0      @ was the return address zero?
+            bne 1f          @ if not, jump ahead to branch to it.
 
-        1:
-            ldr r0, =0x10000100
-            ldr r1, =0xE000ED08
-            str r0, [r1]
-            ldmia r0, {{r0, r1}}
-            msr msp, r0
-            bx r1
+            ldr r0, =0x10000100     @ address of code after bootloader in XIP
+            ldr r1, =0xE000ED08     @ address of VTOR in SCS
+            str r0, [r1]            @ set vector table to start of code
+            ldmia r0!, {{r3, r4}}   @ read initial SP, PC
+            mov sp, r3              @ configure initial SP
+
+        1:  bx r4                   @ and jump to initial PC
         ",
         options(noreturn),
     )

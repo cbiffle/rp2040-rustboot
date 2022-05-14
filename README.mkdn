@@ -7,7 +7,8 @@ program is responsible for setting up Flash to run the _rest_ of the code.
 Normally this program is written in assembly language. I was curious to see if
 it could be done in Rust.
 
-Spoiler: it appears that the answer is yes.
+It appears that it can, and the result is smaller than the assembly language
+version.
 
 ## Building the bootloader images.
 
