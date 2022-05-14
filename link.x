@@ -4,7 +4,7 @@ MEMORY {
     RAM : ORIGIN = 0x20000000, LENGTH = 264K
 }
 
-ENTRY(Reset);
+ENTRY(reset_handler);
 
 SECTIONS {
     /* The ROM doesn't actually give us a choice in this, but, hey. */
@@ -12,7 +12,7 @@ SECTIONS {
     PROVIDE(_stext = ORIGIN(FLASH));
 
     .text _stext : {
-        *(.Reset .Reset.*);
+        *(.reset_handler .reset_handler.*);
         *(.text .text.*);
         . = ALIGN(4);
         __etext = .;

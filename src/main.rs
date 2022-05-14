@@ -73,10 +73,10 @@ const ADDR_L: u8 = ADDR_MODE_BIT_COUNT / 4;
 /// 2. If LR is not zero: jump where it points instead.
 ///
 /// Either way, that jump will be our final act.
-#[link_section = ".Reset"]
+#[link_section = ".reset_handler"]
 #[no_mangle]
 #[naked]
-pub unsafe extern "C" fn Reset() -> ! {
+pub unsafe extern "C" fn reset_handler() -> ! {
     core::arch::asm!(
         "
             push {{lr}}
