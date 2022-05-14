@@ -1,3 +1,21 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+//! A bootloader for running programs out of QSPI Flash on the RP2040.
+//!
+//! The RP2040 boot ROM loads the first 256 bytes from an attached flash chip
+//! using very conservative settings. It then checks a CRC and, if valid, jumps
+//! to the start of the block. The program in those 256 bytes is responsible for
+//! reconfiguring the flash chip as desired for higher performance, and then
+//! jumping into the _real_ application (which normally starts at offset 256
+//! into the flash).
+//!
+//! The official bootloaders are written in assembly and rely on the C SDK. This
+//! one is written in Rust and does not. I've also analyzed the assembly
+//! bootloaders (of which there are several, copies of one another) and
+//! extracted their differences into Cargo features.
+
 #![no_std]
 #![no_main]
 
